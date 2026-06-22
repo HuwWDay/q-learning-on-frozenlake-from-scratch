@@ -79,14 +79,12 @@ def q_learning_update(q_table, state, action, reward, next_state, done, alpha, g
 # Step 11 - interaction_step
 def interaction_step(env, q_table, state, epsilon, alpha, gamma, rng):
     action = epsilon_greedy_action(q_table, state, epsilon, env.action_space, rng)
-    
-    # Step the environment
     next_state, reward, terminated, truncated, _ = env.step(action)
     done = bool(terminated or truncated)
     
-    # Mutate Q-table in place
     _ = q_learning_update(q_table, state, action, reward, next_state, done, alpha, gamma)
     
+    # Returning next_state here is what allows the episode loop to advance
     return int(next_state), float(reward), done
 
 # Step 12 - run_training_episode
