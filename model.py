@@ -79,21 +79,15 @@ def q_learning_update(q_table, state, action, reward, next_state, done, alpha, g
 
 # Step 11 - interaction_step
 def interaction_step(env, q_table, state, epsilon, alpha, gamma, rng):
-    """Select an action, step the env, update the Q-table, and return the step results."""
-    # 1. Select an action using the epsilon-greedy policy helper
     action = epsilon_greedy_action(q_table, state, epsilon, env.action_space, rng)
     
-    # 2. Step the environment using the chosen action
-    # Gymnasium returns: next_state, reward, terminated, truncated, info
+    # Step the environment
     next_state, reward, terminated, truncated, _ = env.step(action)
-    
-    # 3. Combine terminated and truncated to determine if the episode is done
     done = bool(terminated or truncated)
     
-    # 4. Apply the Q-learning update in-place
+    # Mutate Q-table in place
     _ = q_learning_update(q_table, state, action, reward, next_state, done, alpha, gamma)
     
-    # 5. Return the tuple with strict plain Python types
     return int(next_state), float(reward), done
 
 # Step 12 - run_training_episode
