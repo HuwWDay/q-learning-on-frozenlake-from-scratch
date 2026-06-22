@@ -103,32 +103,49 @@ def interaction_step(env, q_table, state, epsilon, alpha, gamma, rng):
 
 # Step 12 - run_training_episode
 def run_training_episode(env, q_table, epsilon, alpha, gamma, rng, max_steps=200):
-    """Reset the env, run interaction steps until done or max_steps, and return total reward."""
-    # 1. Reset the environment to get the initial state
-    # Gymnasium reset returns a tuple: (initial_state, info)
-    state, _ = env.reset()
+    # This resets the frozen lake back to the starting tile 'S' for the new episode!
+    state, _ = env.reset() 
     
     total_reward = 0.0
     step = 0
     
-    # 2. Run the episode loop
     while step < max_steps:
-        # Perform a single interaction step
         state, reward, done = interaction_step(env, q_table, state, epsilon, alpha, gamma, rng)
-        
-        # Accumulate the reward
         total_reward += reward
         step += 1
-        
-        # If the episode is terminated or truncated, exit the loop
         if done:
             break
             
-    # 3. Return total accumulated episode reward as a plain float
     return float(total_reward)
 
-# Step 13 - train_q_learning (not yet solved)
-# TODO: implement
+# Step 13 - train_q_learning
+import numpy as np
+
+def train_q_learning(env, num_episodes, alpha=0.1, gamma=0.99, epsilon_start=1.0, epsilon_min=0.05, epsilon_decay=0.995, seed=0, max_steps=200):
+    """Train a Q-learning agent for num_episodes; return (q_table, returns)."""
+    rng = np.random.default_rng(seed)
+    env.action_space.seed(seed)
+    
+    num_states = env.observation_space.n
+    num_actions = env.action_space.n
+    q_table = np.zeros((num_states, num_actions))
+    
+    episode_returns = []
+    epsilon = epsilon_start
+    
+    # We pass the base seed to the environment's initial state once to lock the map's layout generation trajectory
+    env.reset(seed=seed)
+    
+    for episode in range(num_episodes):
+        # NOTE: run_training_episode must handle calling env.reset() EVERY time it starts.
+        total_reward = run_training_episode(
+            env, q_table, epsilon, alpha, gamma, rng, max_steps=max_steps
+        )
+        
+        episode_returns.append(float(total_reward))
+        epsilon = max(epsilon_min, epsilon * epsilon_decay)
+        
+    return q_table, episode_returns
 
 # Step 14 - extract_greedy_policy (not yet solved)
 # TODO: implement
