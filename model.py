@@ -101,8 +101,31 @@ def interaction_step(env, q_table, state, epsilon, alpha, gamma, rng):
     # 5. Return the tuple with strict plain Python types
     return int(next_state), float(reward), done
 
-# Step 12 - run_training_episode (not yet solved)
-# TODO: implement
+# Step 12 - run_training_episode
+def run_training_episode(env, q_table, epsilon, alpha, gamma, rng, max_steps=200):
+    """Reset the env, run interaction steps until done or max_steps, and return total reward."""
+    # 1. Reset the environment to get the initial state
+    # Gymnasium reset returns a tuple: (initial_state, info)
+    state, _ = env.reset()
+    
+    total_reward = 0.0
+    step = 0
+    
+    # 2. Run the episode loop
+    while step < max_steps:
+        # Perform a single interaction step
+        state, reward, done = interaction_step(env, q_table, state, epsilon, alpha, gamma, rng)
+        
+        # Accumulate the reward
+        total_reward += reward
+        step += 1
+        
+        # If the episode is terminated or truncated, exit the loop
+        if done:
+            break
+            
+    # 3. Return total accumulated episode reward as a plain float
+    return float(total_reward)
 
 # Step 13 - train_q_learning (not yet solved)
 # TODO: implement
