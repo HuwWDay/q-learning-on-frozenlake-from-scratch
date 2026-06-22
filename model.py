@@ -66,8 +66,8 @@ def td_target(reward, gamma, q_table, next_state, done):
 
 # Step 9 - td_error
 def td_error(target, q_table, state, action):
-    # TODO: return the TD error: target minus current Q(state, action)
-    return target - q_table[state][action]
+    # MUST be Target minus Q
+    return float(target - q_table[state, action])
 
 # Step 10 - q_learning_update
 def q_learning_update(q_table, state, action, reward, next_state, done, alpha, gamma):
