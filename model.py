@@ -59,14 +59,9 @@ def decay_epsilon(epsilon, decay_rate, min_epsilon):
     return max(min_epsilon, epsilon*decay_rate)
 
 # Step 8 - td_target
-import numpy as np
-
 def td_target(reward, gamma, q_table, next_state, done):
-    """Compute r + gamma * max_a Q(next_state, a), zeroing the bootstrap when done."""
-    # If the episode is done, the bootstrap value is 0. Otherwise, it's max_a Q(s', a)
-    bootstrap = 0.0 if done else max_q_value(q_table, next_state)
-    
-    # Return the complete TD target as a plain float
+    bootstrap = 0.0 if done else np.max(q_table[next_state])
+    # MUST return reward + bootstrap, not 0!
     return float(reward + gamma * bootstrap)
 
 # Step 9 - td_error
