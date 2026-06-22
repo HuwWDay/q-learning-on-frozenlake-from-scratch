@@ -69,8 +69,10 @@ def td_target(reward, gamma, q_table, next_state, done):
     # Return the complete TD target as a plain float
     return float(reward + gamma * bootstrap)
 
-# Step 9 - td_error (not yet solved)
-# TODO: implement
+# Step 9 - td_error
+def td_error(target, q_table, state, action):
+    # TODO: return the TD error: target minus current Q(state, action)
+    return target - q_table[state][action]
 
 # Step 10 - q_learning_update (not yet solved)
 # TODO: implement
