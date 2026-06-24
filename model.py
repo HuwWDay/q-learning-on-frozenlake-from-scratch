@@ -39,8 +39,8 @@ def sample_random_action(action_space):
 # Step 5 - should_explore
 def should_explore(epsilon, rng):
     """Return True with probability epsilon using the provided numpy Generator."""
-    # Using rng.random() is the modern, canonical way to draw from [0.0, 1.0)
-    return epsilon > rng.random()
+    # Reverting to uniform() to perfectly match the original scaffold's expectation
+    return epsilon > rng.uniform()
 
 # Step 6 - epsilon_greedy_action
 import numpy as np
