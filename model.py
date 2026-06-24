@@ -80,7 +80,7 @@ def interaction_step(env, q_table, state, epsilon, alpha, gamma, rng):
     action = epsilon_greedy_action(q_table, state, epsilon, env.action_space, rng)
     next_state, reward, terminated, truncated, _ = env.step(action)
     
-    # Pass ONLY bool(terminated) so we don't zero out Q-values on timeouts
+    # CRITICAL: Only pass `bool(terminated)` so we don't zero out Q-values on timeouts
     _ = q_learning_update(q_table, state, action, reward, next_state, bool(terminated), alpha, gamma)
     
     # Break the loop if the episode is naturally done OR timed out
