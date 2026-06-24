@@ -144,6 +144,15 @@ def run_greedy_episode(env, policy, seed=0, max_steps=200):
             return float(reward) == 1.0
     return False
 
-# Step 16 - evaluate_success_rate (not yet solved)
-# TODO: implement
+# Step 16 - evaluate_success_rate
+def evaluate_success_rate(env, policy, num_episodes=100, seed=0, max_steps=200):
+    """Run multiple greedy episodes and return the success rate (0.0 to 1.0)."""
+    successes = 0
+    for i in range(num_episodes):
+        # Change the seed slightly for each episode if you want variance, 
+        # though deterministic FrozenLake relies heavily on the environment layout
+        ep_seed = seed + i if seed is not None else None
+        if run_greedy_episode(env, policy, seed=ep_seed, max_steps=max_steps):
+            successes += 1
+    return float(successes) / num_episodes
 
