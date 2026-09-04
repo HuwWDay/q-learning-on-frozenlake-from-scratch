@@ -39,15 +39,19 @@ def should_explore(epsilon, rng):
     return rng.random() < epsilon
 
 # Step 6 - epsilon_greedy_action
-import numpy as np
-
 def epsilon_greedy_action(q_table, state, epsilon, action_space, rng):
     """Return an epsilon-greedy action for the given state."""
-    # TODO: with prob epsilon explore via action_space, else take greedy action
     if should_explore(epsilon, rng):
         return sample_random_action(action_space)
     else:
-        return greedy_action(q_table, state)
+        row = q_table[state]
+        max_val = np.max(row)
+        # Find all actions tied for the maximum value
+        best_actions = np.flatnonzero(row == max_val)
+        if len(best_actions) == 1:
+            return int(best_actions[0])
+        # Break ties uniformly at random using the episode rng
+        return int(rng.choice(best_actions))
 
 # Step 7 - decay_epsilon
 def decay_epsilon(epsilon, decay_rate, min_epsilon):
@@ -101,6 +105,7 @@ def run_training_episode(env, q_table, epsilon, alpha, gamma, rng, max_steps=200
     return float(total_reward)
 
 # Step 13 - train_q_learning
+# ── Step 013  train_q_learning ──
 def train_q_learning(
     env,
     num_episodes,
@@ -113,13 +118,13 @@ def train_q_learning(
     max_steps=200,
 ):
     """Train a Q-learning agent for num_episodes; return (q_table, returns)."""
-    # 1. Seed the numpy generator
+    # 1. Seed the numpy generator once
     rng = np.random.default_rng(seed)
 
     # 2. Seed the action space
     env.action_space.seed(seed)
 
-    # 3. Seed the environment via reset prior to the training loop
+    # 3. Seed the environment once via reset
     env.reset(seed=seed)
 
     # 4. Initialize a fresh Q-table
@@ -128,7 +133,7 @@ def train_q_learning(
     episode_returns = []
     epsilon = epsilon_start
 
-    # 5. Run the training loop
+    # 5. Run training episodes
     for _ in range(num_episodes):
         total_reward = run_training_episode(
             env, q_table, epsilon, alpha, gamma, rng, max_steps=max_steps
