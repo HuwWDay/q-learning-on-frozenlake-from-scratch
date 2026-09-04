@@ -23,11 +23,8 @@ def max_q_value(q_table, state):
     return np.max(q_table[state])
 
 # Step 3 - greedy_action
-import numpy as np
-
 def greedy_action(q_table, state):
     """Return the action index with the highest Q value at the given state."""
-    # TODO: return argmax over the action axis for this state's Q values
     return int(np.argmax(q_table[state]))
 
 # Step 4 - sample_random_action
@@ -105,28 +102,41 @@ def run_training_episode(env, q_table, epsilon, alpha, gamma, rng, max_steps=200
     return float(total_reward)
 
 # Step 13 - train_q_learning
-def train_q_learning(env, num_episodes, alpha=0.1, gamma=0.99, epsilon_start=1.0, epsilon_min=0.05, epsilon_decay=0.995, seed=0, max_steps=200):
+def train_q_learning(
+    env,
+    num_episodes,
+    alpha=0.1,
+    gamma=0.99,
+    epsilon_start=1.0,
+    epsilon_min=0.05,
+    epsilon_decay=0.995,
+    seed=0,
+    max_steps=200,
+):
     """Train a Q-learning agent for num_episodes; return (q_table, returns)."""
+    # 1. Seed the numpy generator
     rng = np.random.default_rng(seed)
+
+    # 2. Seed the action space
     env.action_space.seed(seed)
-    
-    # CRITICAL: Auto-grader expects you to use your Step 1 helper!
+
+    # 3. Seed the environment via reset prior to the training loop
+    env.reset(seed=seed)
+
+    # 4. Initialize a fresh Q-table
     q_table = init_q_table(env.observation_space.n, env.action_space.n)
-    
+
     episode_returns = []
     epsilon = epsilon_start
-    
-    #env.reset(seed=seed)
-    
+
+    # 5. Run the training loop
     for _ in range(num_episodes):
         total_reward = run_training_episode(
             env, q_table, epsilon, alpha, gamma, rng, max_steps=max_steps
         )
         episode_returns.append(float(total_reward))
-        
-        # CRITICAL: Auto-grader expects you to use your Step 7 helper!
         epsilon = decay_epsilon(epsilon, epsilon_decay, epsilon_min)
-        
+
     return q_table, episode_returns
 
 # Step 14 - extract_greedy_policy
